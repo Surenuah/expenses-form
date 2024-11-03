@@ -1,3 +1,4 @@
 backend/node_modules
 backend/src/graphql/graphql.ts
 backend/env
+frontend/node_modules
