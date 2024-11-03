@@ -1,14 +1,24 @@
-type User {
+type Transaction {
     id: ID!
-    name: String!
-    email: String!
+    dateTime: String!
+    author: String!
+    sum: Float!
+    category: String!
+    comment: String
+}
+
+input TransactionInput {
+    dateTime: String!
+    author: String!
+    sum: Float!
+    category: String!
+    comment: String
 }
 
 type Query {
-    users: [User!]!
-    user(id: ID!): User
+    transactions: [Transaction!]!
 }
 
 type Mutation {
-    createUser(name: String!, email: String!): User!
+    createTransaction(data: TransactionInput!): Transaction!
 }
