@@ -1,4 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
+import axios from "axios";
+import { useMutation } from "react-query";
 
 type TransactionFormValues = {
   dateTime: string;
@@ -15,13 +17,9 @@ export const TransactionForm = () => {
     formState: { errors },
   } = useForm<TransactionFormValues>();
 
-  const onSubmit: SubmitHandler<TransactionFormValues> = (data) => {
-    fetch("http://localhost:3000/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+  const { mutate: createTransaction } = useMutation(
+    (data: TransactionFormValues) =>
+      axios.post("http://localhost:3000/graphql", {
         query: `
           mutation CreateTransaction($data: TransactionInput!) {
             createTransaction(data: $data) {
@@ -38,14 +36,10 @@ export const TransactionForm = () => {
           data,
         },
       }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("Transaction created:", result);
-      })
-      .catch((error) => {
-        console.error("Error creating transaction:", error);
-      });
+  );
+
+  const onSubmit: SubmitHandler<TransactionFormValues> = (data) => {
+    createTransaction(data);
   };
 
   return (
@@ -54,7 +48,9 @@ export const TransactionForm = () => {
         <label htmlFor="dateTime">Date and Time</label>
         <input
           type="datetime-local"
-          {...register("dateTime", { required: "Date and time are required" })}
+          {...register("dateTime", {
+            required: "Date and time are required",
+          })}
         />
         {errors.dateTime && <span>{errors.dateTime.message}</span>}
       </div>
